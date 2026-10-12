@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solo-citations"
+version = "1.0.0"
+description = "Solo-citation analysis of laser inertial confinement fusion energy literature"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "ChY-Si" }]
+keywords = ["scientometrics", "citation-network", "solo-citations", "inertial-confinement-fusion", "scopus"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+    "License :: OSI Approved :: Apache Software License",
+]
+dependencies = [
+    "pandas>=1.5",
+    "numpy>=1.23",
+    "matplotlib>=3.7",
+    "openpyxl>=3.0",
+    "requests>=2.28",
+]
+
+[project.optional-dependencies]
+# Only stages 1-2 (data collection from the Scopus API) need this.
+collect = ["pybliometrics>=4.4"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]

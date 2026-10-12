@@ -1,0 +1,25 @@
+# Normalise text files so the repository stays consistent across platforms.
+* text=auto eol=lf
+
+# Binary assets must never be line-ending converted, even when git guesses they
+# are text (it does for PDF and EPS).
+*.pdf  binary
+*.eps  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.xlsx binary
+*.xls  binary
+*.zip  binary
+
+# Reports are checked out verbatim.
+*.tex  text eol=lf
+*.sty  text eol=lf
+*.bib  text eol=lf
+*.md   text eol=lf
+*.py   text eol=lf
+
+# Make GitHub treat the report as a document rather than prose.
+*.pdf  linguist-documentation
+*.csv  linguist-generated

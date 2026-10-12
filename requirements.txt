@@ -1,0 +1,7 @@
+# Runtime dependencies of the pipeline (tested with these versions).
+pandas>=1.5.3
+numpy>=1.23
+matplotlib>=3.7
+openpyxl>=3.0          # reading the .xlsx copies of the result tables
+pybliometrics>=4.4     # stages 1-2 only; the rest works fully offline
+requests>=2.28

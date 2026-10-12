@@ -1,0 +1,42 @@
+; Example pybliometrics configuration.
+;
+; You normally do not need this file: scripts/collect_citations.py generates a
+; complete configuration (including your API keys) at
+; config/pybliometrics.generated.cfg, which is git-ignored.
+;
+; This template is kept only to document which settings the pipeline controls.
+; Values in braces are filled in at generation time.
+
+[Directories]
+AbstractRetrieval = {cache}/Scopus/abstract_retrieval
+AffiliationRetrieval = {cache}/Scopus/affiliation_retrieval
+AffiliationSearch = {cache}/Scopus/affiliation_search
+AuthorRetrieval = {cache}/Scopus/author_retrieval
+AuthorSearch = {cache}/Scopus/author_search
+CitationOverview = {cache}/Scopus/citation_overview
+ScopusSearch = {cache}/Scopus/scopus_search
+SerialTitleSearch = {cache}/Scopus/serial_search
+SerialTitleISSN = {cache}/Scopus/serial_title
+PlumXMetrics = {cache}/Scopus/plumx
+SubjectClassifications = {cache}/Scopus/subject_classification
+ArticleEntitlement = {cache}/ScienceDirect/article_entitlement
+ArticleMetadata = {cache}/ScienceDirect/article_metadata
+ArticleRetrieval = {cache}/ScienceDirect/article_retrieval
+NonserialTitle = {cache}/ScienceDirect/nonserial_title
+ObjectMetadata = {cache}/ScienceDirect/object_metadata
+ObjectRetrieval = {cache}/ScienceDirect/object_retrieval
+PublicationLookup = {cache}/Scival/publication_lookup
+AuthorMetrics = {cache}/Scival/author_metrics
+InstitutionLookupMetrics = {cache}/Scival/institution_metrics
+TopicLookupMetrics = {cache}/Scival/topic_metrics
+ScDirSubjectClassifications = {cache}/ScienceDirect/subject_classification
+ScienceDirectSearch = {cache}/ScienceDirect/science_direct_search
+
+[Authentication]
+; pybliometrics expects the literal "API_KEYS = k1,k2,k3" payload here.
+APIKey = API_KEYS = {keys}
+InstToken = {inst_token}
+
+[Requests]
+Timeout = {timeout}
+Retries = {retries}
