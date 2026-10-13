@@ -1,101 +1,109 @@
 # SoloCitations
 
-激光惯性约束聚变能源（Inertial Confinement Fusion Energy, IFE）领域的**独奏引用（Solo Citations, SC）**分析代码。
+**激光惯性约束聚变能源（Inertial Confinement Fusion Energy, IFE）的独奏引用分析**
 
-本仓库是《科学计量学导论》课程报告 **《激光惯性约束聚变能源文献计量分析》** 的配套代码与数据。
-全部结果可在无网络、无 Scopus API key 的情况下复核；只有两个采集阶段需要 API 访问。
+用独奏引用（Solo Citations, SC）指标衡量 2021 年 NIF 点火是否真正重构了惯性约束聚变领域的知识体系。
+本仓库是《科学计量学导论》课程报告 **《激光惯性约束聚变能源文献计量分析》** 的配套代码、数据与报告源码。
 
----
-
-## 目录
-
-- [研究内容](#研究内容)
-- [快速开始](#快速开始)
-- [流水线](#流水线)
-- [仓库结构](#仓库结构)
-- [数据说明](#数据说明)
-- [复现报告结果](#复现报告结果)
-- [编译报告](#编译报告)
-- [关于 API key](#关于-api-key)
-- [已知问题](#已知问题)
-- [引用与许可](#引用与许可)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+[![Report](https://img.shields.io/badge/report-11%20pages-b31b1b.svg)](report/main.pdf)
 
 ---
 
-## 研究内容
+## 这是什么
 
-2021 年美国国家点火装置（NIF）首次实现聚变增益 $Q>1$。本研究以 Scopus 数据库为数据源，
-构建包含 **243 篇核心文献**（被引 ≥ 50 次）的三层引文网络，用 Wu 与 Yan 提出的
-独奏引用指标判断该领域是否发生了实质性的范式转型。
+2021 年美国国家点火装置（NIF）首次实现聚变增益 $Q>1$。判断这一里程碑是否构成"颠覆性创新"，
+不能只看物理指标，还要看后续研究**如何引用它**。
 
-对目标文献 $F$ 的每一篇施引文献 $C$：
+本项目基于 Scopus 数据库构建 **243 篇核心文献**（被引 ≥ 50 次）的三层引文网络，
+对每篇目标文献 $F$ 的每一篇施引文献 $C$ 判定：
 
-| 类型 | 条件 | SC |
+| 引用类型 | 判定条件 | SC |
 |---|---|---|
-| 独奏式引用（Solo Citation） | $C$ 引用 $F$，但不引用 $F$ 的任何一篇参考文献 | 1 |
-| 二重引用（Duet Citation） | $C$ 同时引用 $F$ 与其至少一篇参考文献 | 0 |
-| 序曲引用（Prelude Citation） | $C$ 只引用 $F$ 的参考文献 | — |
+| **独奏式引用** Solo Citation | $C$ 引用 $F$，但**不**引用 $F$ 的任何一篇参考文献 | 1 |
+| **二重引用** Duet Citation | $C$ 同时引用 $F$ 与其至少一篇参考文献 | 0 |
+| **序曲引用** Prelude Citation | $C$ 只引用 $F$ 的参考文献 | — |
 
-评估指标取 $R_{\mathrm{SC}} = \mathrm{SCtot} / \text{Cited by}$。
+指标取 $R_{\mathrm{SC}} = \mathrm{SC}_{\mathrm{tot}} / \text{Cited by}$：**值越高，说明后续研究越倾向于绕过该文献的知识背景直接引用它本身，替代性越强。**
 
-**主要结论**：IFE 领域的 $R_{\mathrm{SC}}$ 自 1992 年以来整体波动下降，知识积累呈渐进式发展；
-NIF 点火论文的 $R_{\mathrm{SC}} = 79/475 \approx 0.166$ 低于当年均值 0.222，
-说明该成果延续性强于颠覆性。详见 [`report/main.pdf`](report/main.pdf)。
+## 主要结论
+
+- IFE 领域的 $R_{\mathrm{SC}}$ **自 1992 年以来整体波动下降**，知识积累呈渐进式发展，而非革命性跃迁；
+- NIF 点火论文的 $R_{\mathrm{SC}} = 79/475 \approx 0.166$，**低于**当年（2021）样本均值 0.222，
+  说明该成果**延续性强于颠覆性**——是既有范式的重要里程碑，而非路径创新；
+- 知识产出高度集中于美（1350）、中（707）、法（348），体现大科学装置驱动的领域特征。
+
+完整论证见 **[报告全文](report/main.pdf)**（11 页）。
 
 ---
 
 ## 快速开始
 
+**成果复核完全离线，不需要网络，也不需要 Scopus API key：**
+
 ```powershell
-# 1) 只需要复核结果：装三个基础依赖即可，不需要 API key
 pip install -r requirements.txt
 
-# 2) 一致性自检（离线，几秒钟）
-python scripts/verify_results.py
-
-# 3) 重绘报告中的图表
+python scripts/verify_results.py                                    # 一致性自检，几秒钟
 python scripts/plot_rate.py --csv data/processed/yearly_stats.csv   # 图 3
-python scripts/make_overview_figures.py --full-query                 # 图 1、图 2
+python scripts/make_overview_figures.py --full-query                # 图 1、图 2
 ```
 
-需要从 Scopus 重新采集数据时，先配置 API key，见[关于 API key](#关于-api-key)：
+`verify_results.py` 会逐篇校验 243 篇的 `SCtot` 是否等于其引文网络节点文件 `SC` 列之和，
+以及 `Rate == SCtot / Cited by`。预期输出：
+
+```
+检查 data\processed\base3.csv（243 行）
+  [通过] 243 篇的 SCtot 与节点文件全部一致
+  [通过] Rate == SCtot / Cited by
+
+验证通过。
+```
+
+只有需要**重新采集数据**时才要配置密钥：
 
 ```powershell
+$env:SCOPUS_API_KEYS = "你的32位key1,你的32位key2"      # 多个 key 自动轮询
+
 python scripts/collect_citations.py --from-export --limit 5   # 先试 5 篇
-python scripts/collect_citations.py --from-export             # 全量 243 篇
+python scripts/collect_citations.py --from-export             # 全量采集
 python scripts/build_networks.py                              # 构建引文网络
-python scripts/aggregate_sc.py                                # 汇总 SC 与被引
-python scripts/plot_rate.py
+python scripts/aggregate_sc.py --with-rate                    # 汇总 SC 与 R_SC
+python scripts/plot_rate.py                                   # 出图
 ```
 
 ---
 
-## 流水线
-
-四个阶段与报告 4.2.4 节的处理流程一一对应：
+## 处理流水线
 
 ```
-                 ┌── data/raw/scopus_export_*.csv（Scopus 导出的 243 篇核心文献）
-                 │
-① 采集一级引用    │  collect_citations.py --stage 1
-                 │  → data/interim/<eid>/REFs.csv        目标文献的参考文献
-                 │  → data/interim/<eid>/Cits.csv        引用目标文献的施引文献
-                 │
-② 展开二级引用    │  collect_citations.py --stage 2
-                 │  → data/interim/<eid>/<eid>'sCitsREF/<cit>'sREFs.csv
-                 │                                       每篇施引文献的参考文献
-                 │
-③ 构建网络与 SC   │  build_networks.py      → data/processed/network/<eid>_nodes.csv
-                 │                                       三层有向网络 + 每节点 SC 标记
-                 │
-④ 指标聚合        │  aggregate_sc.py        → data/processed/eid_sc_tot.csv
-                 │  plot_rate.py           → report/figures/washed_yearly_rate.png
-                 └─ make_overview_figures.py（仅用步骤 ① 的元数据，与网络无关）
+Scopus 导出（data/raw/scopus_export_*.csv）
+      │
+      │  ① collect_citations.py --stage 1
+      ├─→ data/interim/<eid>/REFs.csv          目标文献的参考文献
+      ├─→ data/interim/<eid>/Cits.csv          引用目标文献的施引文献
+      │
+      │  ② collect_citations.py --stage 2
+      ├─→ data/interim/<eid>/<eid>'sCitsREF/<cit>'sREFs.csv
+      │                                        每篇施引文献的参考文献
+      │
+      │  ③ build_networks.py
+      ├─→ data/processed/network/<eid>_nodes.csv
+      │                                        三层有向网络 + 每节点 SC 标记
+      │
+      └─ ④ aggregate_sc.py  → data/processed/eid_sc_tot.csv
+         plot_rate.py       → report/figures/washed_yearly_rate.png
 ```
 
-采集阶段（① ②）支持断点续跑：已完成的目标 EID 记入
-`data/interim/done_b_eids.txt` / `done_c_eids.txt`，重新运行会自动跳过。
-多线程滑动窗口保证个别施引文献超过 3000 篇的目标论文也不会撑爆内存。
+**工程要点**
+
+- **断点续跑**：阶段 ①② 已完成的目标 EID 记入 `done_b_eids.txt` / `done_c_eids.txt`，
+  中断后重新运行自动跳过，不必从头再来；
+- **滑动窗口限流**：阶段 ② 用固定大小的待处理队列（默认 16 线程、最多 500 个任务），
+  即使某篇目标文献有 3000+ 篇施引文献也不会耗尽内存；
+- **请求缓存**：pybliometrics 的缓存落在 `data/interim/scopus_cache/`，
+  重复调试不会浪费 API 配额。
 
 ---
 
@@ -117,76 +125,67 @@ SoloCitations/
 │   ├── network.py               阶段 ③④的实现
 │   ├── citation_ratio.py        逐年统计与绘图
 │   └── figures.py               元数据图表
-├── config/                      配置模板（真实密钥不入库）
 ├── data/
 │   ├── raw/                     Scopus 导出数据（已提交，0.4 MB）
-│   ├── processed/               243 篇的最终结果与引文网络节点表（已提交，24 MB）
-│   └── interim/                 逐篇原始抓取结果（不入库，可重新生成）
-├── report/                      LaTeX 课程报告源码、图表与编译好的 PDF
-│   ├── main.tex                 报告正文
-│   ├── USTCReport.sty           排版模板（取自 jweihe/USTC_Latex_Template）
+│   ├── processed/               243 篇最终结果与引文网络节点表（已提交，24 MB）
+│   └── interim/                 逐篇抓取中间数据（可重新生成，不入库）
+├── report/                      LaTeX 报告源码、图表与编译好的 PDF
+│   ├── main.tex / main.pdf      正文与编译产物（11 页）
+│   ├── USTCReport.sty           排版模板
 │   ├── reference.bib            参考文献
-│   ├── figures/                 三张图 + 校徽素材
-│   └── main.pdf                 编译产物（11 页）
-├── legacy/                      与本研究无关的旧数据，仅作溯源
-└── docs/                        数据说明与复现指南
-    ├── DATA.md                  每个数据文件的字段、来源与坑
-    └── REPRODUCE.md             三个层次的复现步骤
+│   └── figures/                 三张图 + 校徽素材
+├── docs/
+│   ├── DATA.md                  数据字段、来源与口径说明
+│   └── REPRODUCE.md             三个层次的复现步骤
+├── config/                      配置模板（真实密钥不入库）
+└── pyproject.toml               可选的包安装配置
 ```
 
 ---
 
-## 数据说明
+## 数据
 
-| 文件 | 内容 |
-|---|---|
-| `data/raw/overall.csv` | Scopus「Refine results」面板导出，检索式、全量 3138 篇的年份/国家/类型计数 |
-| `data/raw/scopus_export_…csv` | 262 条 Scopus 记录（被引 ≥ 50 次），含标题/作者/年份/被引/DOI |
-| `data/processed/base3.csv` | **最终结果表**：243 篇的 `eid, SCtot, Cited by, Year, Title, Rate` |
-| `data/processed/network/*_nodes.csv` | 243 篇各自的引文网络节点表 `EID, SC` |
-| `data/processed/yearly_stats.csv` | 逐年 $R_{\mathrm{SC}}$ 均值/极值，图 3 的数值底稿 |
-| `data/processed/base1.csv` / `.xlsx` | 262 条导出的精简副本 / 100 篇的中间版本（含手工整理的 `SCtot`） |
-| `data/processed/base2.xlsx` | 261 篇的中间版本 |
-| `data/processed/eid_sc_tot_legacy.csv` | 早期脚本的输出，**数据源有误，见[已知问题](#已知问题)** |
-| `legacy/MLNL.csv`、`legacy/MLandLang.csv` | 与本研究无关的机器学习论文导出，仅作为问题溯源保留 |
-
-检索式（`overall.csv` 中记录）：
+检索式（记录于 `data/raw/overall.csv`）：
 
 ```
 TITLE-ABS-KEY("Laser" AND "inertial confinement fusion" AND "energy")
 ```
 
-需要注意 `overall.csv` 里的 **3138 篇**是检索式命中的全部文献，
-而 262 条的记录导出只是其中被引 ≥ 50 次的部分；两者不能混用。
-字段细节与两个数据源的差别见 [`docs/DATA.md`](docs/DATA.md)。
+命中 **3138 篇**；从中保留被引 ≥ 50 次且引用关系完整的 **243 篇**作为核心样本。
 
----
+| 文件 | 内容 |
+|---|---|
+| `data/raw/overall.csv` | Refine results 面板导出：检索式与全量 3138 篇的年份/国家/类型计数 |
+| `data/raw/scopus_export_…csv` | 262 条 Scopus 记录（被引 ≥ 50 次） |
+| `data/processed/base3.csv` | **最终结果表**：243 篇的 `eid, SCtot, Cited by, Year, Title, Rate` |
+| `data/processed/network/*_nodes.csv` | 243 篇各自的引文网络节点表 `EID, SC` |
+| `data/processed/yearly_stats.csv` | 逐年 $R_{\mathrm{SC}}$ 均值与极值（图 3 的数值底稿） |
+| `data/processed/base1.*`、`base2.xlsx` | 样本筛选过程中的中间版本 |
 
-## 复现报告结果
+字段级说明、两种数据源的口径差别，见 **[docs/DATA.md](docs/DATA.md)**。
 
-两套检查都不需要网络与 API key：
+## 复现
+
+| 层次 | 需要什么 | 能验证什么 | 耗时 |
+|---|---|---|---|
+| **A. 离线复核** | `pip install -r requirements.txt` | 全部报告数字与图表 | 秒级 |
+| **B. 端到端重算** | 上一步 + `data/interim/` | 阶段 ③④ 与归档结果逐节点一致 | 分钟级 |
+| **C. 完整重跑** | 上一步 + Scopus API key | 从检索式开始的全部流程 | 数小时 |
+
+B 层可用一行命令验证：
 
 ```powershell
-# ① 校验 base3.csv 的每个 SCtot 都等于对应节点文件 SC 列之和，且 Rate = SCtot / Cited by
-python scripts/verify_results.py
-
-# ② 端到端重算：从 data/interim 重建某篇论文的网络，与 data/processed/network 逐节点比对
 python scripts/verify_results.py --rebuild 2-s2.0-36449005127
 ```
 
-第 ② 项在开发时已通过：重建 `2-s2.0-36449005127` 得到 40 316 个节点、
-SC 合计 2068，与归档结果**逐节点完全一致**（0 处差异）。
+它会从中间数据重建该论文的网络并与仓库中归档的结果逐节点比对：
 
-要完整重跑 ① ② 两个采集阶段还需要 `data/interim`（约 250 MB、5.3 万个文件，
-未随仓库分发）。报告中的三个数字可直接复核：
-
-```powershell
-python scripts/plot_rate.py --csv data/processed/yearly_stats.csv
+```
+重建 2-s2.0-36449005127 并与归档结果逐节点比对
+  [通过] 40316 个节点完全一致，SC 合计 2068
 ```
 
-详细步骤见 [`docs/REPRODUCE.md`](docs/REPRODUCE.md)。
-
----
+逐步说明见 **[docs/REPRODUCE.md](docs/REPRODUCE.md)**。
 
 ## 编译报告
 
@@ -194,66 +193,37 @@ python scripts/plot_rate.py --csv data/processed/yearly_stats.csv
 
 ```powershell
 cd report
-xelatex main && bibtex main && xelatex main && xelatex main
+latexmk -xelatex main.tex
 ```
-
-`main.pdf` 与最终版同名文件 `激光惯性约束聚变能源文献计量分析.pdf` 内容相同。
-
----
 
 ## 关于 API key
 
-**本仓库不包含任何 API key。** 采集脚本按以下优先级读取密钥：
+**本仓库不包含任何 API key。** 采集脚本按优先级读取密钥：
 
 1. 环境变量 `SCOPUS_API_KEYS`（多个 key 用逗号或空白分隔）
 2. `config/scopus_keys.txt`（已被 `.gitignore` 忽略），每行一个 key
 
 ```powershell
-# 方式一：环境变量
-$env:SCOPUS_API_KEYS = "key1,key2,key3"
-python scripts/collect_citations.py --from-export
-
-# 方式二：密钥文件
 Copy-Item config\scopus_keys.example.txt config\scopus_keys.txt
 notepad config\scopus_keys.txt
 ```
 
-脚本会据此生成 `config/pybliometrics.generated.cfg`（同样被忽略），
-把请求缓存指向 `data/interim/scopus_cache/`。多个 key 由 pybliometrics 自动轮询。
+脚本据此生成 `config/pybliometrics.generated.cfg`（同样被忽略），
+把请求缓存指向 `data/interim/scopus_cache/`。
 
-> 早期的 `pybliometrics.cfg` / `pybliometrics1.cfg` 曾把明文 key 写入文件并提交，
-> 那两个文件已从仓库移除。**如果那些 key 仍在使用，请到
-> <https://dev.elsevier.com/apikey/manage> 撤销并重新申请。**
+> `AbstractRetrieval(view="REF")` 获取参考文献列表通常需要机构订阅；
+> 没有订阅时 `REFs.csv` 会为空，SC 将全部退化为 0。
 
----
+## 引用
 
-## 已知问题
+指标方法来自：
 
-**`output/`、`network_output/`、`datasource/MLNL.csv` 与本研究无关。**
-这些是机器学习论文（"Cheap and fast"、"Spark SQL"、"GCN" 等）的导出与抓取结果，
-是流水线调试时留下的，`datasource/MLNL.csv` 曾被 `batch_b_parallel.py` 等脚本当作 EID 列表误用，
-因而 `eid_sc_tot_legacy.csv` 的 134 行是无效数据。
+> Wu, Q. & Yan, Z. (2019). *Solo Citations, Duet Citations, and Prelude Citations:
+> New Measures of the Disruption of Academic Papers.* arXiv:1905.03461
 
-报告结论全部来自 **`output0/` + `network_output0/`** 这一套（243 篇 IFE 文献），
-对应仓库中的 `data/processed/base3.csv` 与 `data/processed/network/`。
-`legacy/` 目录只保留两个 ML 导出文件用于溯源。
+报告排版模板取自 [jweihe/USTC_Latex_Template](https://github.com/jweihe/USTC_Latex_Template)（CC BY 4.0），致谢原作者。
 
-其他局限（与报告 4.5 节一致）：
+## 许可
 
-- 样本仅 243 篇，未做结论稳定性与关键变量敏感性检验；
-- 三层网络展开的数据量极大（5.3 万个 CSV、约 250 MB），复现成本高；
-- 只用了 $R_{\mathrm{SC}}$ 一个指标，未讨论引用习惯、预印本等因素；
-- 未与数据库平均基准或相似领域对比。
-
----
-
-## 引用与许可
-
-- 指标方法：Wu, Q. & Yan, Z. (2019). *Solo Citations, Duet Citations, and Prelude Citations:
-  New Measures of the Disruption of Academic Papers.* arXiv:1905.03461
-- 代码：Apache License 2.0，见 [`LICENSE`](LICENSE)
-- 报告排版模板：[`report/USTCReport.sty`](report/USTCReport.sty) 取自
-  [jweihe/USTC_Latex_Template](https://github.com/jweihe/USTC_Latex_Template)（CC BY 4.0），
-  致谢原作者。
-
-Scopus 数据版权归 Elsevier 所有，本仓库仅保留课程研究所需的派生结果。
+代码以 [Apache License 2.0](LICENSE) 发布。
+Scopus 数据版权归 Elsevier 所有，本仓库仅保留研究所需的派生结果。

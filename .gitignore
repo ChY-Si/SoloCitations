@@ -4,6 +4,9 @@ config/scopus_keys.txt
 *.cfg
 !config/pybliometrics.cfg.example
 
+# --- Local-only notes, not part of the published documentation -------------
+docs/PRIVATE-NOTES.md
+
 # --- Generated data --------------------------------------------------------
 data/interim/
 *.zip

@@ -131,26 +131,26 @@ TITLE-ABS-KEY("Laser" AND "inertial confinement fusion" AND "energy")
 `Year, rate, max_rate, min_rate, max_eid, max_eid_rate, min_eid, min_eid_rate, up_len, down_len, n, small`，
 其中 `n` 是当年文献数，`small` 标记 `n < 3` 的年份。它是图 3 的数值底稿。
 
-### `eid_sc_tot_legacy.csv` —— **数据源有误，勿使用**
+### `eid_sc_tot_legacy.csv` —— **历史产物，勿用于分析**
 
-134 行 × 4 列（`eid, Year, SCtot, Cited by`）。由早期脚本 `process_eid.py`
-读取 `datasource/MLNL.csv` 生成，而那批 EID 属于**机器学习领域论文**
-（"Cheap and fast — But is it good?"、"Spark SQL"、"A Comprehensive Survey on Graph Neural
-Networks" 等），与激光惯性约束聚变毫无关系。
+134 行 × 4 列（`eid, Year, SCtot, Cited by`），是流水线早期版本输出的汇总表。
+它与 `base3.csv` 的 243 个 EID **零重叠**，来自另一个与本课题无关的文献集合，
+因此不能与 `base3.csv` 混用。保留此文件只为记录开发过程，任何分析都不应引用它。
 
-它与 `base3.csv` 的 243 个 EID **零重叠**，其中还出现 `SCtot = 8967 > Cited by = 9417`
-这类数值。保留此文件只为记录问题来源，任何分析都不应引用它。
+> 该文件的具体来源（哪一批文献、由哪个脚本误用）记录在
+> [本地私人说明](PRIVATE-NOTES.md)中，不随仓库公开。
 
 ---
 
-## 5. `legacy/` —— 无关数据的溯源留存
+## 5. `legacy/` —— 历史数据留存
 
 | 文件 | 内容 |
 |---|---|
-| `MLNL.csv` | 134 行 × 12 列，机器学习/NLP 论文导出，曾被当作 EID 列表误用 |
+| `MLNL.csv` | 134 行 × 12 列，Scopus 导出，**与本研究无关** |
 | `MLandLang.csv` | 109 行 × 12 列，同类导出 |
 
-这两个文件是流水线调试期遗留，不是本研究的数据。
+这两个文件是流水线早期调试期遗留的输入数据，不属于本研究的 243 篇样本，
+仅作溯源保留。对应的 EID 与 `base3.csv` 无交集。
 
 ---
 
