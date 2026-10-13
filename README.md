@@ -5,9 +5,10 @@
 用独奏引用（Solo Citations, SC）指标衡量 2021 年 NIF 点火是否真正重构了惯性约束聚变领域的知识体系。
 本仓库是《科学计量学导论》课程报告 **《激光惯性约束聚变能源文献计量分析》** 的配套代码、数据与报告源码。
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Report](https://img.shields.io/badge/report-11%20pages-b31b1b.svg)](report/main.pdf)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.9%2B-3776ab)](https://www.python.org/)
+[![Report](https://img.shields.io/badge/report-11%20pages-success)](report/main.pdf)
+[![Offline verification](https://img.shields.io/badge/offline%20verification-passing-success)](#快速开始)
 
 ---
 
